@@ -7,6 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,13 +41,17 @@ public class ContactInfoController {
     }
 
     @PostMapping
-    public ResponseEntity<ContactInfoDto> addNewFunFact(@RequestBody ContactInfoDto contactInfoDto) {
+    public ResponseEntity<ContactInfoDto> addNewContactInfo(@RequestBody ContactInfoDto contactInfoDto) {
         ContactInfoModel contactInfoModel = convertContactInfoDtoToContactInfoModel(contactInfoDto);
-        System.out.println(contactInfoModel.getPersonalEmail());
-        System.out.println(contactInfoModel.getCompanyEmail());
-        System.out.println(contactInfoModel.getPhoneNumber());
         ContactInfoDto addedContactInfo = convertContactInfoModelToContactInfoDto(this.contactInfoService.addNewContactInfo(contactInfoModel));
         return ResponseEntity.ok(addedContactInfo);
+    }
+
+    @PatchMapping
+    public ResponseEntity<ContactInfoDto> updateContactInfo(@RequestBody ContactInfoDto contactInfoDto) {
+        ContactInfoModel contactInfoModel = convertContactInfoDtoToContactInfoModel(contactInfoDto);
+        ContactInfoDto updatedContactInfo = convertContactInfoModelToContactInfoDto(this.contactInfoService.updateContactInfo(contactInfoModel));
+        return ResponseEntity.ok(updatedContactInfo);
     }
 
     private ContactInfoDto convertContactInfoModelToContactInfoDto(ContactInfoModel contactInfoModel) {

@@ -26,7 +26,11 @@ public class ContactInfoService {
         return this.contactInfoRepository.save(contactInfoModel);
     }
 
-    // public ContactInfoModel updateContactInfo(ContactInfoModel contactInfoModel) {
-    //     return this.contactInfoRepository.save(contactInfoModel);
-    // }
+    public ContactInfoModel updateContactInfo(ContactInfoModel contactInfoModel) {
+        ContactInfoModel contactInfo = this.contactInfoRepository.findById(contactInfoModel.getId()).orElseThrow();
+        contactInfo.setCompanyEmail(contactInfoModel.getCompanyEmail());
+        contactInfo.setPersonalEmail(contactInfoModel.getPersonalEmail());
+        contactInfo.setPhoneNumber(contactInfoModel.getPhoneNumber());
+        return this.contactInfoRepository.save(contactInfo);
+    }
 }

@@ -25,4 +25,15 @@ public class FunFactService {
     public FunFactModel addFunFact(FunFactModel funFactModel) {
         return this.funFactRepository.save(funFactModel);
     }
+
+    public FunFactModel updateFunFact(FunFactModel funFactModel) {
+        FunFactModel funfact = this.funFactRepository.findById(funFactModel.getId()).orElseThrow();
+        funfact.setFunFact(funFactModel.getFunFact());
+        return this.funFactRepository.save(funfact);
+    }
+
+    public Long deleteFunFact(Long funFactId) {
+        this.funFactRepository.deleteById(funFactId);
+        return funFactId;
+    }
 }

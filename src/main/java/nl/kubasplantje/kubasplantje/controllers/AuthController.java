@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +34,12 @@ public class AuthController {
         this.tokenService = tokenService;
         this.authenticationManager = authenticationManager;
         this.modelMapper = modelMapper;
+    }
+
+    @GetMapping("/check")
+    public ResponseEntity<String> check() {
+        String check = "success";
+        return ResponseEntity.ok(check);
     }
 
     @PostMapping("/token")

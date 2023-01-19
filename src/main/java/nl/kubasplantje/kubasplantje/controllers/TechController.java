@@ -11,7 +11,10 @@ import org.modelmapper.internal.bytebuddy.asm.Advice.Return;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,30 +39,41 @@ public class TechController {
     }
 
     @GetMapping
-    public List<TechDto> getAllTechs() {
+    public ResponseEntity<List<TechDto>> getAllTechs() {
         List<TechModel> techModels = this.techService.getTechs();
         List<TechDto> techDtos = new ArrayList<>();
         for (TechModel techModel : techModels) {
             techDtos.add(convertModelToDto(techModel));
         }
-        return techDtos;
+        return ResponseEntity.ok(techDtos);
     }
 
     @PostMapping
-    public ResponseEntity<String> addNewTech(@RequestBody TechDto techDto) {
-        try {
-            this.techService.addTech(convertDtoToModel(techDto));
-            return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).body("Sucess");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    public ResponseEntity<TechDto> addNewTech(@RequestBody TechDto techDto) {
+        TechModel techModel = convertDtoToModel(techDto);
+        TechDto addedTech = convertModelToDto(this.techService.addTech(techModel));
+        return ResponseEntity.ok(addedTech);
+    }
+
+    @PatchMapping
+    public ResponseEntity<TechDto> updateTech(@RequestBody TechDto techDto) {
+        TechModel techModel = convertDtoToModel(techDto);
+        TechDto addedTech = convertModelToDto(this.techService.updateTech(techModel));
+        return ResponseEntity.ok(addedTech);
+    }
+
+    @DeleteMapping("/{techId}")
+    public ResponseEntity<Long> deleteTech(@PathVariable("techId") Long techId) {
+        this.techService.deleteTech(techId);
+        return ResponseEntity.ok(techId);
+    }
+
+
+    private TechDto convertModelToDto(TechModel techModel) {
+        return this.modelMapper.map(techModel, TechDto.class);
     }
 
     private TechModel convertDtoToModel(TechDto techDto) {
         return this.modelMapper.map(techDto, TechModel.class);
-    }
-
-    private TechDto convertModelToDto(TechModel techModel) {
-        return this.modelMapper.map(techModel, TechDto.class);
     }
 }

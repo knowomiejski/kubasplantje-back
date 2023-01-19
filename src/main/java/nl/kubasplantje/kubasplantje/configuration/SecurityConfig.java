@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
 
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -59,12 +60,25 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
+        .cors().configurationSource(c -> {
+            CorsConfiguration corsConfig = new CorsConfiguration();
+            corsConfig.addAllowedOriginPattern( "http://localhost:3030" );
+            corsConfig.addAllowedHeader("*");
+            corsConfig.addAllowedMethod(HttpMethod.GET);
+            corsConfig.addAllowedMethod(HttpMethod.POST);
+            corsConfig.addAllowedMethod(HttpMethod.PATCH);
+            corsConfig.addAllowedMethod(HttpMethod.DELETE);
+            return corsConfig;
+        })
+        .and()
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> {
-            auth.requestMatchers(HttpMethod.GET, "/api/v1/**").permitAll();
             auth.requestMatchers(HttpMethod.POST, "/api/v1/auth/token").permitAll();
             auth.requestMatchers(HttpMethod.POST, "/api/v1/auth/register").permitAll();
+            auth.requestMatchers(HttpMethod.GET, "/api/v1/**").authenticated();
             auth.requestMatchers(HttpMethod.POST, "/api/v1/**").authenticated();
+            auth.requestMatchers(HttpMethod.PATCH, "/api/v1/**").authenticated();
+            auth.requestMatchers(HttpMethod.DELETE, "/api/v1/**").authenticated();
         })
         .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
         .userDetailsService(userService)

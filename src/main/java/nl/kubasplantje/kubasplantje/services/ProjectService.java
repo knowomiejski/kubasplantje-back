@@ -41,6 +41,32 @@ public class ProjectService {
         return this.projectRepository.save(projectModel);
     }
 
+    public ProjectModel updateProject(ProjectModel projectModel) {
+        ProjectModel project = this.projectRepository.findById(projectModel.getId()).orElseThrow();
+
+        for (Long techModelId : projectModel.getUsedTechIds()) {
+            Optional<TechModel> techModel = this.techRepository.findById(techModelId);
+            if (techModel.isPresent()) {
+                projectModel = this.addTechToProject(projectModel, techModel.get());
+            } else {
+                throw new TechNotFoundException(String.format("The tech with the id: %s was not found", techModelId.toString()));
+            }
+        }
+
+        project.setClient(projectModel.getClient());
+        project.setDescription(projectModel.getDescription());
+        project.setLink(projectModel.getLink());
+        project.setProjectName(projectModel.getProjectName());
+        project.setUsedTechs(projectModel.getUsedTechs());
+
+        return this.projectRepository.save(project);
+    }
+
+    public Long deleteProject(Long projectId) {
+        this.projectRepository.deleteById(projectId);
+        return projectId;
+    }
+
     private ProjectModel addTechToProject(ProjectModel projectModel, TechModel techModel) {
         if (!projectModel.getUsedTechs().contains(techModel)) {
             projectModel.getUsedTechs().add(techModel);

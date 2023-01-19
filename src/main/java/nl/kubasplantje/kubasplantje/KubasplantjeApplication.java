@@ -12,5 +12,4 @@ public class KubasplantjeApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(KubasplantjeApplication.class, args);
 	}
-
 }

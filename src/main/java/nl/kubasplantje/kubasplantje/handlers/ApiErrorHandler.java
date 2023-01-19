@@ -1,9 +1,8 @@
 package nl.kubasplantje.kubasplantje.handlers;
 
-import java.security.DrbgParameters.Reseed;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -12,6 +11,11 @@ import nl.kubasplantje.kubasplantje.exceptions.TechNotFoundException;
 
 @ControllerAdvice
 public class ApiErrorHandler {
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Object> handleAuthenticationException(AuthenticationException e) {
+        return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.UNAUTHORIZED);
+    }
 
     @ExceptionHandler(TechAlreadyPresentException.class)
     public ResponseEntity<Object> handleTechAlreadyPresentException(TechAlreadyPresentException e) {

@@ -6,10 +6,14 @@ import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import nl.kubasplantje.kubasplantje.dtos.FunFactDto;
@@ -45,6 +49,19 @@ public class FunFactController {
         FunFactModel funFactModel = convertFunFactDtoToFunFactModel(funFactDto);
         FunFactDto addedFunFact = convertFunFactModelToFunFactDto(this.funFactService.addFunFact(funFactModel));
         return ResponseEntity.ok(addedFunFact);
+    }
+
+    @PatchMapping
+    public ResponseEntity<FunFactDto> updateFunFact(@RequestBody FunFactDto funFactDto) {
+        FunFactModel funFactModel = convertFunFactDtoToFunFactModel(funFactDto);
+        FunFactDto updatedFunFact = convertFunFactModelToFunFactDto(this.funFactService.updateFunFact(funFactModel));
+        return ResponseEntity.ok(updatedFunFact);
+    }
+
+    @DeleteMapping("/{funFactId}")
+    public ResponseEntity<Long> deleteFunFact(@PathVariable("funFactId") Long funFactId) {
+        this.funFactService.deleteFunFact(funFactId);
+        return ResponseEntity.ok(funFactId);
     }
 
     private FunFactDto convertFunFactModelToFunFactDto(FunFactModel funFactModel) {
