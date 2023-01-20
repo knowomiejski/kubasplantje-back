@@ -38,4 +38,20 @@ public class TokenService {
                         .build();
         return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
+
+    public String expireToken(Authentication authentication) {
+        Instant now = Instant.now();
+        String scope = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(" "));
+
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                        .issuer("self")
+                        .issuedAt(now.minus(2, ChronoUnit.DAYS))
+                        .expiresAt(now.minus(1, ChronoUnit.DAYS))
+                        .subject(authentication.getName())
+                        .claim("scope", scope)
+                        .build();
+        return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+    }
 }

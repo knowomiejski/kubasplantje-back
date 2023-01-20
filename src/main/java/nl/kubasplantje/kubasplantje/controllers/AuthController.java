@@ -1,5 +1,7 @@
 package nl.kubasplantje.kubasplantje.controllers;
 
+import java.security.Principal;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +42,12 @@ public class AuthController {
     public ResponseEntity<String> check() {
         String check = "success";
         return ResponseEntity.ok(check);
+    }
+
+    @GetMapping("/logout")
+    public String logout(Authentication authentication) {
+        String token = tokenService.expireToken(authentication);
+        return token;
     }
 
     @PostMapping("/token")

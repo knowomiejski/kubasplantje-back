@@ -82,6 +82,10 @@ public class SecurityConfig {
         })
         .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
         .userDetailsService(userService)
+        .logout(logout -> logout
+            .logoutUrl("/api/v1/logout")
+            .invalidateHttpSession(true)
+        )
         .build();
     }
 
